@@ -113,7 +113,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .item .t{font-weight:600;overflow-wrap:anywhere}
 .ga{font:500 13px var(--font-mono);color:var(--accent);padding:1px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
 .hint{font-size:14px;color:var(--muted)}
-.flags{font:600 12px var(--font-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.more{appearance:none;justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;border:1.5px dashed var(--line);border-radius:6px;background:transparent;color:var(--accent);font:600 13px var(--font-display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.more span{font-size:11px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .seg button{appearance:none;min-height:42px;border:1.5px solid var(--line);border-radius:6px;background:transparent;color:var(--muted);font:700 14px var(--font-display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .seg button[aria-pressed="true"][data-v="ok"]{background:var(--ok);border-color:var(--ok);color:var(--on-solid)}
@@ -322,8 +323,9 @@ function vItem(i,mode){
     '<button class="item-h" data-act="toggle-item" data-iid="'+i.id+'" aria-expanded="'+open+'">'+
       '<span class="item-l1"><span class="t" data-show="t">'+esc(i.t)+'</span><span class="ga" data-show="ga"'+(i.ga?'':' hidden')+'>'+esc(i.ga)+'</span></span>'+
       '<span class="hint" data-show="h"'+(i.h?'':' hidden')+'>'+esc(i.h)+'</span>'+
-      (fl.length?'<span class="flags">'+fl.join(' · ')+'</span>':'')+
-    '</button>'+seg+(open?vDetail(i,mode):'')+'</li>';
+    '</button>'+seg+
+    '<button class="more" data-act="toggle-item" data-iid="'+i.id+'" aria-expanded="'+open+'">'+(open?'Ocultar':(tpl?'Editar prueba':'Notas y fotos'))+(fl.length&&!open?' · '+fl.join(' · '):'')+'<span aria-hidden="true">'+(open?'▴':'▾')+'</span></button>'+
+    (open?vDetail(i,mode):'')+'</li>';
 }
 function vChecklist(doc,mode){
   var tpl=mode==='tpl',f=ui.filter;
@@ -454,9 +456,9 @@ function makePDF(p){
       y+=1.5;rule(LINE,.2);y+=3;
       for(var a=0;a<i.ph.length;a+=3){
         var row=i.ph.slice(a,a+3),W=56,hs=row.map(function(src){try{var pr=d.getImageProperties(src);return Math.min(46,W*pr.height/pr.width);}catch(e){return 42;}}),rh=Math.max.apply(null,hs);
-        need(rh+4);
+        need(rh+9);y+=2;
         row.forEach(function(src,k){try{d.addImage(src,'JPEG',M+k*(W+3),y,W,hs[k]);}catch(e){}});
-        y+=rh+4;
+        y+=rh+6;
       }
     });
     y+=3;
